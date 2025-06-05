@@ -1,100 +1,93 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { FilterChecboxProps, FilterCheckbox } from './filter-checkbox';
-import { Input, Skeleton } from '../ui';
-
+import { Input } from '../ui/input';
+import { Skeleton } from '../ui';
+import { Title } from './title';
+import { ChevronDown } from 'lucide-react';
 
 type Item = FilterChecboxProps;
 
 interface Props {
-    title: string;
-    items: Item[];
-    defaultItems?: Item[];
-    limit?: number;
-    loading?: boolean;
-    searchInputPlaceholder?: string;
-    onClickCheckbox?: (id: string) => void;
-    defaultValue?: string[];
-    selected?: Set<string>;
-    className?: string;
-    name?: string;
+  title: string;
+  items: Item[];
+  defaultItems?: Item[];
+  limit?: number;
+  searchInputPlaceholder?: string;
+  onCheckedChange?: (checked: boolean, value: string) => void;
+  defaultValue?: string[];
+  className?: string;
 }
 
 export const CheckboxFiltersGroup: React.FC<Props> = ({
-    title,
-    items,
-    defaultItems,
-    limit = 8,
-    searchInputPlaceholder = "Поиск...",
-    className,
-    loading,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    onClickCheckbox,
-    selected,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    defaultValue,
-    name,
-}) => { 
-    const [showAll, setShowAll] = React.useState(false);
-    const [searchValue, setSearchValue] = React.useState('');
+  title,
+  items,
+  defaultItems,
+  onCheckedChange,
+  limit = 6,
+  searchInputPlaceholder = 'Поиск...',
+  defaultValue = [],
+  className,
+}) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedValues, setSelectedValues] = useState<string[]>(defaultValue);
+  const [showAll, setShowAll] = useState(false);
 
-    const onChangeSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchValue(e.target.value);
-    };
-
-    if(loading) {
-        return <div className={className}>
-            <p className='font-bold mt-3'>{title}</p>
-
-        {
-            ...Array(limit).fill(0).map((_, index) => (
-                <Skeleton key={index} className='h-6 mb-4 rounded-[8px]' />
-            ))
-        }
-
-        <Skeleton className='w-28 h-6 mb-4 rounded-[8px]' />
-        </div>
-    }
-
-    const list = showAll 
-    ? items.filter((item) => item.text.toLowerCase().includes(searchValue.toLowerCase())) 
-    : (defaultItems || items).slice(0, limit);
-
-    return ( 
-    <div className={className}>
-        <p className="font-bold mb-3">{title}</p>
-
-        {showAll && ( 
-            <div className="mb-5">
-                <Input 
-                onChange={onChangeSearchInput} 
-                placeholder={searchInputPlaceholder}
-                className="bg-gray-50 border-none" />
-            </div>
-        )}
-
-        <div className='flex flex-col gap-4 max-h-96 pr-2 overflow-auto scrollbar'>
-            {list.map((item, index) => (
-                <FilterCheckbox
-                key={index}
-                text={item.text}
-                value={item.value}
-                endAdornment={item.endAdornment}
-                checked={selected?.has(item.value)}
-                onCheckedChange={() => onClickCheckbox?.(item.value)}
-                name={name}
-                />
-            ))}
-        </div>
-
-        {items.length > limit && (
-        <div className={showAll ? 'border-t border-t-neutral-100 mt-4' : ''}>
-            <button onClick={() => setShowAll(!showAll)} className='text-primary mt-3'>
-                {showAll ? 'Скрыть' : '+ Показать всё'}
-            </button>
-        </div>
-        )}  
-    </div>
+  const handleCheckboxChange = (checked: boolean, value: string) => {
+    setSelectedValues(prev => 
+      checked 
+        ? [...prev, value]
+        : prev.filter(v => v !== value)
     );
+    onCheckedChange?.(checked, value);
+  };
+
+  const filteredItems = items.filter(item =>
+    item.text.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const displayedItems = showAll ? filteredItems : filteredItems.slice(0, limit);
+  const hasMoreItems = filteredItems.length > limit;
+
+  return (
+    <div className={className}>
+      <Title text={title} size='sm' className='mb-3 font-bold' />
+
+      <div className='mb-5'>
+        <Input
+          placeholder={searchInputPlaceholder}
+          className="bg-gray-50 border-none"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      <div className="flex flex-col gap-4 max-h-96 pr-2 overflow-auto scrollbar">
+        {displayedItems.map((item, index) => (
+          <FilterCheckbox
+            key={index}
+            text={item.text}
+            value={item.value}
+            endAdornment={item.endAdornment}
+            checked={selectedValues.includes(item.value)}
+            onCheckedChange={(checked) => handleCheckboxChange(checked, item.value)}
+          />
+        ))}
+      </div>
+
+      {hasMoreItems && (
+        <button
+          onClick={() => setShowAll(!showAll)}
+          className='flex items-center gap-1 mt-4 text-primary hover:text-primary/80 transition-colors'
+        >
+          {showAll ? 'Скрыть' : 'Показать всё'}
+          <ChevronDown
+            size={16}
+            className={`transition-transform ${showAll ? 'rotate-180' : ''}`}
+          />
+        </button>
+      )}
+    </div>
+  );
 };
