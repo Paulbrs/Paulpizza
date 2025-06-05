@@ -205,7 +205,7 @@ export const ProductModal: React.FC<Props> = ({ product, className }) => {
       <Dialog open={Boolean(product)} onOpenChange={() => router.back()}>
           <DialogContent  
               className={cn(
-                'p-0 w-full max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl min-h-[500px] max-h-[500vh] bg-white overflow-hidden', 
+                'p-0 w-full max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh] bg-white overflow-y-scroll', 
                 className,
               )}>
               <div className="flex flex-col lg:flex-row">
