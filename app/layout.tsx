@@ -5,6 +5,7 @@ import { Header } from '@/shared/components/shared'
 import { CartProvider } from '@/shared/context/cart-context'
 import { AuthProvider } from '@/shared/context/auth-context'
 import { Toaster } from 'react-hot-toast'
+import { Suspense } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,7 +24,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <CartProvider>
-            <Header />
+            <Suspense fallback={<div>Loading Header...</div>}>
+              <Header />
+            </Suspense>
             {children}
             <Toaster position="top-center" />
           </CartProvider>
