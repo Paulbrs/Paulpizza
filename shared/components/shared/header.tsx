@@ -51,7 +51,7 @@ export const Header: React.FC<Props> = ({ hasSearch = true, hasCart = true, clas
 
   return (
     <header className={cn('border-b', className)}>
-        <Container className='flex items-center justify-between py-8'>
+        <Container className='flex items-center justify-between py-8 px-[2px] sm:px-6 lg:px-8'>
             {/* Левая часть*/}
             <Link href='/' className='sm:mr-0'>
             <div className='flex items-center gap-4'>
@@ -69,7 +69,7 @@ export const Header: React.FC<Props> = ({ hasSearch = true, hasCart = true, clas
             } */}
 
             {/* Правая часть*/}
-            <div className='flex items-center gap-4 sm:gap-3'>
+            <div className='flex items-center gap-2 sm:gap-3'>
               {isAuthenticated ? (
                 <div className="flex items-center gap-4">
                   <span className="text-sm text-gray-600">
