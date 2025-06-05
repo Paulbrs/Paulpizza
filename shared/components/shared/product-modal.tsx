@@ -237,7 +237,7 @@ export const ProductModal: React.FC<Props> = ({ product, className }) => {
                                   {ingredients}
                               </p>
                           </div>
-                          <div className="flex items-center justify-between pt-6 border-t">
+                          <div className={cn("flex items-center justify-between pt-6 border-t")}>
                               <div className="text-2xl font-bold">
                                   {product.price} BYN
                               </div>

@@ -85,7 +85,7 @@ export const AuthModal: React.FC<Props> = ({ open, onClose }) => {
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent className={cn("w-full max-w-[90%] md:max-w-[80%] sm:max-w-[425px] p-4 md:p-6 pl-4 sm:pl-6 bg-white border shadow-lg")}>
+            <DialogContent className={cn("sm:max-w-[425px] bg-white border shadow-lg rounded-xl sm:rounded-lg")}>
                 <div className="mb-6">
                     <h2 className="text-2xl font-bold">
                         {isRegister ? 'Регистрация' : 'Вход в аккаунт'}
